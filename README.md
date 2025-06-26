@@ -1,103 +1,79 @@
-# Multi-Agent AI System with MCP Orchestration
+⚙️ Multi-Agent AI Workflow with MCP Orchestration
+An automated, resilient AI pipeline that processes incoming files, analyzes them with LLM agents, and performs smart follow-up actions. Built for extensibility and full transparency.
 
-> **A self-driving pipeline that ingests files, reasons over them with LLMs, and triggers follow-up actions—robust, transparent, and fun to hack on.**
+🚀 1. Project Overview
+This project showcases a multi-agent AI architecture controlled via a custom Model Context Protocol (MCP) layer. The system ingests various file types (PDF, JSON, TXT), classifies them, delegates processing to dedicated agents, and routes actions based on analysis.
 
----
+High-Level Flow:
+Receive a file through an API.
 
-## 1. Overview
+Classify format and intent using a central agent.
 
-This repository implements a **multi-agent AI workflow** orchestrated by a **Model Context Protocol (MCP)** layer. Each incoming file (PDF, JSON, or TXT/Email) is:
+Dispatch the file to a specialized agent (Email, PDF, or JSON).
 
-1. **Received** via an API (FastAPI).
-2. **Classified** by the Classifier Agent to determine format and business intent.
-3. **Routed** to one of three specialist agents (Email, PDF, JSON) to extract structured data or validate schema.
-4. **Chained** into follow-up actions (e.g., CRM escalation, risk alerts, logging) via the Action Router.
-5. **Logged** at every step into a single SQLite “memory” table (`workflow_run`), creating an append‐only audit trail.
+Trigger downstream actions like CRM updates or alerts.
 
-By storing intermediate state in SQLite and using a small retry framework, this pipeline is resilient to crashes or network failures. Future UI layers (React, Streamlit, etc.) can query the memory and show detailed run histories in real time.
+Log each step into a persistent, queryable memory layer using SQLite.
 
----
+The SQLite memory store ensures crash recovery and enables live dashboards for tracking agent decisions and actions.
 
-## 2. Video Demo
-
-Below is a quick demo of the pipeline in action. Click the thumbnail to watch:
-
-[![Demo Video](sampleFiles/Thumbnail.png)](https://drive.google.com/file/d/1qtwB7YiYhrKtkWHFA6pXZ80nnM67SpZJ/view)
-
----
-
-## 3. Architecture
+🧱 2. System Architecture
 
 
-![Project Screenshot](sampleFiles/Architecture.png)
+🧠 3. Workflow Breakdown
+📤 File Upload Interface
+Users upload files via a CLI or frontend (React).
 
----
-## ⚙️ System Workflow Overview
+🧩 FastAPI Backend (MCP Layer)
+Generates a unique run_id.
 
-### 🖥️ Client / UI
-- React or CLI uploads a file (PDF, JSON, or TXT) to the backend.
+Inserts metadata into SQLite.
 
-### 🚀 FastAPI (MCP Orchestrator)
-- Generates a unique `run_id`.
-- Inserts initial metadata into SQLite memory.
-- Calls the Classifier Agent to detect file type & intent.
-- Updates memory, then routes to the appropriate specialist agent.
+Delegates to a classifier agent for file format and intent.
 
-### 🗄️ SQLite Memory (`workflow_run` table)
-- Holds one row per `run_id`.
-- Columns include: `detected_format`, `intent`, each agent’s output, `action_taken`, `action_status`, and an append-only history log.
+Sends the request to the matching agent for deeper processing.
 
-### 🧠 Classifier Agent
-- Reads extracted text or raw file.
-- Uses heuristics or an LLM to output `{ format, intent, llm_output }`.
-- Updates memory with classification fields.
+🗃️ SQLite Memory (workflow_run Table)
+Tracks all pipeline states.
 
-### 📧 Email / 📄 PDF / 🗃️ JSON Agents
-- **📧 Email Agent**: Parses headers and body, detects sender, tone, and urgency → suggests action (escalate vs. close).
-- **📄 PDF Agent**: Uses `pdfplumber` (and optional OCR fallback) to extract invoice or policy data → flags high-value invoices or compliance keywords.
-- **🗃️ JSON Agent**: Validates payload against Pydantic schemas → flags anomalies or extracts business fields.
+Includes columns for classification, agent output, and action history.
 
-### 🔄 Action Router
-- Reads each agent’s suggested action from memory.
-- Calls external endpoints (CRM, Risk, Logging) with retry logic.
-- Updates memory with `action_status` and final `current_status`.
+Enables audit logging and traceability.
 
+🔍 Classifier Agent
+Uses LLM + rules to identify file format and purpose.
 
----
-## 4. 🎯 Key Features
+Outputs structured metadata used to drive routing.
 
-### 🧩 Modular Agent Architecture
-- **Classifier Agent**: Splits files by format and intent.
-- **Email Agent**: Extracts sender, mood, and urgency.
-- **PDF Agent**: Handles invoices and policy documents, with OCR fallback support.
-- **JSON Agent**: Validates schemas and flags anomalies.
+📧 / 📄 / 🗃️ Specialist Agents
+Email Agent: Extracts sender info, tone, urgency, and suggests resolution steps.
 
-### 🔄 MCP Orchestration Layer
-- Generates a unique `run_id` for each file.
-- Manages shared context and in-memory updates.
-- Ensures full traceability — no state is lost, even after a crash.
+PDF Agent: Extracts structured content like invoice or compliance data.
 
-### 🚦 Action Routing
-- Rule-based or LLM-assisted decision-making.
-- Triggers external services (e.g., simulated CRM, risk alerts, logging).
-- Includes retry logic with exponential backoff for robust delivery.
+JSON Agent: Validates structure, flags schema mismatches or anomalies.
 
-### 🗂️ Persistent Memory with SQLite
-- Uses a single `workflow_run` table as an event-sourced ledger.
-- Maintains an **append-only history log** for auditability.
-- Ensures **atomic updates** at each pipeline stage.
+⚡ Action Router
+Reads suggested actions from memory.
 
-### ⚡ FastAPI-Based API
-- `POST /process/file` – Upload and trigger a processing run.
-- `GET /runs/{run_id}` – Retrieve full run history and current status.
-- Comes with **Swagger UI** for interactive API documentation.
+Calls downstream services (e.g., CRM, alert system) with retry logic.
 
----
+Logs outcome in memory store.
 
-## 5. Folder Structure
+🔑 4. Core Features
+Modular Agents: Custom logic per file type ensures specialized processing.
+
+Crash-Safe Orchestration: MCP protocol uses persistent memory and retries.
+
+Structured Memory Log: A single source of truth using SQLite with append-only logs.
+
+Action Triggers: Automates downstream API calls based on agent decisions.
+
+API First: Clean REST API with FastAPI + Swagger UI for testing and integration.
+
+📁 5. Project Structure
 
 ```
-FlowbitAI/
+multiagent/
 ├── .gitignore
 ├── LICENSE
 ├── README.md
@@ -150,116 +126,45 @@ FlowbitAI/
         ├── sample1.txt
         └── sample3.txt
 
-```
-
 ---
+💾 6. Workflow Memory: workflow_run Table
+A SQLite-powered ledger that tracks:
 
-## 🧠 6. Memory and Persistence
+File metadata (type, source, format)
 
-All state is stored in a single **SQLite** table called `workflow_run`.
+Classification results and intent
 
-### 🗃️ Table Schema
+Each agent’s output
 
-```sql
-CREATE TABLE IF NOT EXISTS workflow_run (
-    run_id TEXT PRIMARY KEY,
-    source TEXT NOT NULL,
-    file_path TEXT NOT NULL,
-    original_ext TEXT NOT NULL,
-    received_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    detected_format TEXT,
-    intent TEXT,
-    llm_classification TEXT,
-    email_agent_output TEXT,
-    pdf_agent_output TEXT,
-    json_agent_output TEXT,
-    routed_to_agent TEXT,
-    action_taken TEXT,
-    action_payload TEXT,
-    action_status TEXT,
-    current_status TEXT,
-    last_updated DATETIME,
-    history TEXT
+Final actions and their statuses
+
+A complete event history (JSON-logged)
+
+This design allows step-by-step auditing and recovery.
+
+Sample Schema:
+sql
+Copy
+Edit
+CREATE TABLE workflow_run (
+  run_id TEXT PRIMARY KEY,
+  source TEXT,
+  file_path TEXT,
+  ...
+  action_status TEXT,
+  history TEXT
 );
-```
+🧪 7. Testing
+Testing is handled using both scripts and Jupyter notebooks:
 
-### 📄 Column Descriptions
+testDB.ipynb: Explores and verifies the database entries.
 
-- **`run_id`**: UUID string, unique per file.
-- **`source`**: Source of the file (e.g., `"upload"`, `"webhook"`, `"api"`).
-- **`file_path`**: Local path where the file is saved.
-- **`original_ext`**: File extension (e.g., `"pdf"`, `"json"`, `"txt"`).
-- **`received_at`**: Timestamp when the file was first ingested.
-- **`detected_format`**: Output of the Classifier Agent (e.g., `"PDF"`, `"Email"`, `"JSON"`).
-- **`intent`**: Business intent identified by the classifier (e.g., `"Invoice"`, `"Complaint"`, `"Fraud Risk"`).
-- **`llm_classification`**: Raw LLM or heuristic output used for classification.
-- **`email_agent_output`**: JSON blob with fields like:  
-  `{ sender, urgency, tone, issue_summary, suggested_action }`
-- **`pdf_agent_output`**: Extracted data from PDFs (e.g., invoice fields or policy flags).
-- **`json_agent_output`**: JSON structure like:  
-  `{ valid, fields, anomalies }` after schema validation.
-- **`routed_to_agent`**: Name of the agent that processed the file (e.g., `"email_agent"`, `"pdf_agent"`).
-- **`action_taken`**: Action the system decided to perform (e.g., `"escalate_crm"`, `"log_and_close"`).
-- **`action_payload`**: JSON object sent to external services.
-- **`action_status`**: `"pending"`, `"success"`, or `"failed"`.
-- **`current_status`**: Current workflow stage:  
-  `"received"` → `"classified"` → `"processed"` → `"complete"` or `"error"`
-- **`last_updated`**: Last time the row was modified.
-- **`history`**: Append-only JSON array of workflow events, each with timestamp, event type, and details.
+test_agents.py: Runs sample files through agents for verification.
 
----
+Modular tests ensure that each agent and routing decision works independently.
 
-### 🔄 Update Logic
-
-Each orchestrator stage or agent uses `db_manager.update_*` functions to:
-
-- ✅ Write its results to the `workflow_run` table.
-- 📜 Append the corresponding event to the `history` log.
-
-> This allows full traceability and recovery in case of crashes or restarts.
-
----
-
-## 7. 🧪 Testing
-
-Our tests are organized within the `app/test` folder and use a mix of Python scripts and Jupyter notebooks. Here's an overview of how testing is performed:
-
-### Database Testing (`testDB.ipynb` & `testDB.py`)
-
-- A Jupyter Notebook (`testDB.ipynb`) connects to the SQLite database (`memory1.db`).
-- It iterates over the `workflow_run` table, retrieves column names from the cursor description, and prints each record with its values.
-- Additionally, a Python script version (`testDB.py`) runs the same queries from the command line, enabling easier integration with continuous integration (CI) workflows.
-
-### Agent Testing (`test_agents.py`)
-
-- The script `test_agents.py` in `app/test` calls agent functions (e.g., the classifier in `agents/ClassifierAgent.py`) with sample file paths.
-- It prints classification results for various file types (TXT, PDF, JSON, and unknown files) to verify routing logic and classification behavior.
-
-### Exploratory & Debugging
-
-- Tests verify each processing stage independently: file ingestion, classification, DB updates, and routing.
-- Notebooks and scripts enable developers to experiment with inputs, review logs, and trace errors efficiently.
-
-> This modular testing structure ensures that each component — agent logic or database interaction — is validated individually, maintaining robustness and simplifying debugging throughout the pipeline.
-
----
-
-## 8. Installation
-
-> **Note:** The code is under active development.  
-> This section will be updated once additional scripts, Docker files, and front-end clients are added.
-
----
+🛠️ 8. Installation & Setup
+Setup instructions (env setup, Docker, frontend deployment) will be added soon as development progresses.
 
 
-## 📜 License
 
-This project is licensed under the **MIT License**.  
-Feel free to fork, modify, and share.
-
----
-
-Thanks for checking out this Multi-Agent AI System!
-
-If you build something cool with it or have improvements, let me know.  
-Keep hacking, keep innovating. 🎉
