@@ -70,7 +70,7 @@ Action Triggers: Automates downstream API calls based on agent decisions.
 
 API First: Clean REST API with FastAPI + Swagger UI for testing and integration.
 
-"""
+```
 📁 5. Project Structure
 
 FlowbitAI/
@@ -127,8 +127,7 @@ FlowbitAI/
         └── sample3.txt
 
 
-"""
-
+```
 💾 6. Workflow Memory: workflow_run Table
 A SQLite-powered ledger that tracks:
 
