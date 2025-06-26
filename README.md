@@ -72,60 +72,59 @@ API First: Clean REST API with FastAPI + Swagger UI for testing and integration.
 
 📁 5. Project Structure
 
----
 multiagent/
 ├── .gitignore
 ├── LICENSE
 ├── README.md
 ├── app/                              # Backend (FastAPI server)
-│   ├── __init__.py
-│   ├── .env
-│   ├── app.log
-│   ├── config.py                     # Global configuration settings
-│   ├── main.py                       # Primary FastAPI entry point
-│   ├── main1.py                      # Alternate/main entry point (if applicable)
-│   ├── memory.db                     # SQLite database for workflow history
-│   ├── memory1.db                    # Alternative SQLite database copy
-│   ├── agents/                       # Agent implementations (e.g., classification)
-│   │   ├── __init__.py
-│   │   └── ClassifierAgent.py
-│   ├── core/                         # Core logic and utilities
-│   │   ├── __init__.py
-│   │   └── ActionRouter.py           # Routes actions based on agent results
-│   ├── memory/                       # MemoryStore for database interaction
-│   │   ├── __init__.py
-│   │   └── MemoryStore.py
-│   ├── processor/                    # File processing logic (extraction, OCR)
-│   │   ├── __init__.py
-│   │   └── fileProcessor.py
-│   ├── router/                       # Routing logic for agents
-│   │   ├── __init__.py
-│   │   └── AgentRouter.py
-│   └── test/                         # Testing scripts and notebooks
-│       ├── __init__.py
-│       └── testDB.ipynb
+│   ├── __init__.py
+│   ├── .env
+│   ├── app.log
+│   ├── config.py                     # Global configuration settings
+│   ├── main.py                       # Primary FastAPI entry point
+│   ├── main1.py                      # Alternate/main entry point (if applicable)
+│   ├── memory.db                     # SQLite database for workflow history
+│   ├── memory1.db                    # Alternative SQLite database copy
+│   ├── agents/                       # Agent implementations (e.g., classification)
+│   │   ├── __init__.py
+│   │   └── ClassifierAgent.py
+│   ├── core/                         # Core logic and utilities
+│   │   ├── __init__.py
+│   │   └── ActionRouter.py           # Routes actions based on agent results
+│   ├── memory/                       # MemoryStore for database interaction
+│   │   ├── __init__.py
+│   │   └── MemoryStore.py
+│   ├── processor/                    # File processing logic (extraction, OCR)
+│   │   ├── __init__.py
+│   │   └── fileProcessor.py
+│   ├── router/                       # Routing logic for agents
+│   │   ├── __init__.py
+│   │   └── AgentRouter.py
+│   └── test/                         # Testing scripts and notebooks
+│       ├── __init__.py
+│       └── testDB.ipynb
 ├── client/                           # Frontend (React/Vite)
-│   ├── .gitignore
-│   ├── eslint.config.js
-│   ├── index.html
-│   ├── package.json
-│   ├── README.md
-│   ├── vite.config.js
-│   ├── public/
-│   │   └── favicon.ico
-│   └── src/
-│       ├── App.jsx                 # Main React component handling UI and routing display
+│   ├── .gitignore
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── package.json
+│   ├── README.md
+│   ├── vite.config.js
+│   ├── public/
+│   │   └── favicon.ico
+│   └── src/
+│       ├── App.jsx                   # Main React component handling UI and routing display
 └── sampleFiles/                      # Sample documents for testing
-    ├── Architecture.png             # Diagram of system architecture
+    ├── Architecture.png              # Diagram of system architecture
     ├── json/
-    │   └── sample1.json
+    │   └── sample1.json
     ├── pdfs/
-    │   ├── invoice.pdf
-    │   └── receipt.pdf
+    │   ├── invoice.pdf
+    │   └── receipt.pdf
     └── txt/
         ├── sample1.txt
         └── sample3.txt
----
+
 
 💾 6. Workflow Memory: workflow_run Table
 A SQLite-powered ledger that tracks:
