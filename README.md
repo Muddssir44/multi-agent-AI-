@@ -17,10 +17,7 @@ Log each step into a persistent, queryable memory layer using SQLite.
 
 The SQLite memory store ensures crash recovery and enables live dashboards for tracking agent decisions and actions.
 
-🧱 2. System Architecture
-
-
-🧠 3. Workflow Breakdown
+🧠 2. Workflow Breakdown
 📤 File Upload Interface
 Users upload files via a CLI or frontend (React).
 
@@ -59,7 +56,7 @@ Calls downstream services (e.g., CRM, alert system) with retry logic.
 
 Logs outcome in memory store.
 
-🔑 4. Core Features
+🔑 3. Core Features
 Modular Agents: Custom logic per file type ensures specialized processing.
 
 Crash-Safe Orchestration: MCP protocol uses persistent memory and retries.
@@ -71,7 +68,7 @@ Action Triggers: Automates downstream API calls based on agent decisions.
 API First: Clean REST API with FastAPI + Swagger UI for testing and integration.
 
 ```
-📁 5. Project Structure
+📁 4. Project Structure
 
 FlowbitAI/
 ├── .gitignore
@@ -128,7 +125,7 @@ FlowbitAI/
 
 
 ```
-💾 6. Workflow Memory: workflow_run Table
+💾 5. Workflow Memory: workflow_run Table
 A SQLite-powered ledger that tracks:
 
 File metadata (type, source, format)
@@ -154,7 +151,8 @@ CREATE TABLE workflow_run (
   history TEXT
 );
 
-🧪 7. Testing
+
+🧪 6. Testing
 Testing is handled using both scripts and Jupyter notebooks:
 
 testDB.ipynb: Explores and verifies the database entries.
@@ -163,7 +161,8 @@ test_agents.py: Runs sample files through agents for verification.
 
 Modular tests ensure that each agent and routing decision works independently.
 
-🛠️ 8. Installation & Setup
+
+🛠️ 7. Installation & Setup
 Setup instructions (env setup, Docker, frontend deployment) will be added soon as development progresses.
 
 
