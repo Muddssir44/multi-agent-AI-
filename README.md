@@ -72,7 +72,7 @@ API First: Clean REST API with FastAPI + Swagger UI for testing and integration.
 
 📁 5. Project Structure
 
-```
+
 multiagent/
 ├── .gitignore
 ├── LICENSE
@@ -126,7 +126,7 @@ multiagent/
         ├── sample1.txt
         └── sample3.txt
 
----
+
 💾 6. Workflow Memory: workflow_run Table
 A SQLite-powered ledger that tracks:
 
@@ -143,9 +143,7 @@ A complete event history (JSON-logged)
 This design allows step-by-step auditing and recovery.
 
 Sample Schema:
-sql
-Copy
-Edit
+
 CREATE TABLE workflow_run (
   run_id TEXT PRIMARY KEY,
   source TEXT,
@@ -154,6 +152,7 @@ CREATE TABLE workflow_run (
   action_status TEXT,
   history TEXT
 );
+
 🧪 7. Testing
 Testing is handled using both scripts and Jupyter notebooks:
 
