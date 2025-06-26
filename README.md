@@ -72,7 +72,7 @@ API First: Clean REST API with FastAPI + Swagger UI for testing and integration.
 
 📁 5. Project Structure
 
-
+---
 multiagent/
 ├── .gitignore
 ├── LICENSE
@@ -125,7 +125,7 @@ multiagent/
     └── txt/
         ├── sample1.txt
         └── sample3.txt
-
+---
 
 💾 6. Workflow Memory: workflow_run Table
 A SQLite-powered ledger that tracks:
